@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Sistema de Pedidos</title>
+
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  h2 {
+    background-color: #0a0a0a;
+    color: #00ff80;
+    padding: 15px 0;
+    margin: 0;
+    border-bottom: 2px solid #00ff80;
+  }
+
+  div {
+    background: #fff;
+    color: #000;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,255,100,0.3);
+  }
+
+  input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    background-color: #00b050;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background-color: #00913e;
+    transform: scale(1.03);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+  }
+
+  li {
+    background-color: #f0fff0;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+  }
+
+  li button {
+    float: right;
+    background-color: #00b050;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  li button:hover {
+    background-color: #00913e;
+  }
+
+  hr {
+    margin: 20px 0;
+    border: 1px solid #ccc;
+  }
+
+  #msg-login, #msg-reg {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+
+</head>
+<body>
+<h2>Sistema de Pedidos</h2>
+
+<!-- LOGIN -->
+<div id="tela-login">
+  <h3>Login</h3>
+  <input id="email" placeholder="E-mail"><br><br>
+  <input id="senha" type="password" placeholder="Senha"><br><br>
+  <button onclick="fazerLogin()">Entrar</button>
+  <p id="msg-login"></p>
+  <hr>
+  <h4>Não tem conta? Cadastre-se</h4>
+  <input id="rnome" placeholder="Nome"><br><br>
+  <input id="remail" placeholder="E-mail"><br><br>
+  <input id="rsenha" type="password" placeholder="Senha"><br><br>
+  <button onclick="registrar()">Registrar</button>
+  <p id="msg-reg"></p>
+</div>
+
+<!-- CLIENTE -->
+<div id="tela-cliente" style="display:none;">
+  <h3>Área do Cliente</h3>
+  <p id="info-cliente"></p>
+  <button onclick="logout()">Sair</button><br><br>
+
+  <h4>Novo Pedido</h4>
+  <input id="descricao" placeholder="Descrição">
+  <button onclick="criarPedido()">Enviar</button>
+
+  <h4>Seus Pedidos</h4>
+  <ul id="listaPedidos"></ul>
+</div>
+
+<!-- ADMIN -->
+<div id="tela-admin" style="display:none;">
+  <h3>Área do Administrador</h3>
+  <p id="info-admin"></p>
+  <button onclick="logout()">Sair</button>
+  <h4>Pedidos Recebidos</h4>
+  <ul id="listaTodosPedidos"></ul>
+</div>
+
+<script>
+const API = "/api";
+let usuario = null;
+
+async function fazerLogin() {
+  const email = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
+  const resp = await fetch(`${API}/login`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({email, senha})
+  });
+  if (resp.ok) {
+    usuario = await resp.json();
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    if (usuario.tipo === 'CLIENTE') mostrarTelaCliente();
+    else mostrarTelaAdmin();
+    document.getElementById('msg-login').innerText='';
+  } else {
+    document.getElementById('msg-login').innerText='Credenciais inválidas';
+  }
+}
+
+async function registrar() {
+  const nome = document.getElementById('rnome').value;
+  const email = document.getElementById('remail').value;
+  const senha = document.getElementById('rsenha').value;
+  const resp = await fetch(`${API}/registro`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({nome, email, senha})
+  });
+  if (resp.ok) {
+    document.getElementById('msg-reg').innerText='Registro concluído. Faça login.';
+  } else if (resp.status === 409) {
+    document.getElementById('msg-reg').innerText='Email já cadastrado.';
+  } else {
+    document.getElementById('msg-reg').innerText='Erro no registro.';
+  }
+}
+
+async function criarPedido() {
+  const descricao = document.getElementById('descricao').value;
+  if (!descricao) return alert('Digite uma descrição');
+  const resp = await fetch(`${API}/pedido`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({descricao, clienteId: usuario.id})
+  });
+  if (resp.ok) {
+    document.getElementById('descricao').value='';
+    carregarPedidosCliente();
+  } else {
+    alert('Erro ao criar pedido');
+  }
+}
+
+async function carregarPedidosCliente() {
+  const resp = await fetch(`${API}/pedidos/${usuario.id}`);
+  const lista = document.getElementById('listaPedidos');
+  lista.innerHTML = '';
+  if (resp.ok) {
+    const pedidos = await resp.json();
+    pedidos.forEach(p => {
+      const li = document.createElement('li');
+      li.innerHTML = `${p.id} - ${p.descricao} (${new Date(p.data).toLocaleString()})
+        <button onclick="deletarPedido(${p.id})">Excluir</button>`;
+      lista.appendChild(li);
+    });
+  }
+}
+
+async function deletarPedido(id) {
+  if (!confirm('Deseja realmente excluir este pedido?')) return;
+  const resp = await fetch(`${API}/pedido/${id}?clienteId=${usuario.id}`, { method: 'DELETE' });
+  if (resp.ok) {
+    alert('Pedido excluído com sucesso');
+    carregarPedidosCliente();
+  } else {
+    const erro = await resp.json().catch(() => ({}));
+    alert(erro.erro || 'Erro ao excluir pedido');
+  }
+}
+
+async function carregarTodosPedidos() {
+  const resp = await fetch(`${API}/admin/pedidos?email=${usuario.email}&senha=${usuario.senha}`);
+  const lista = document.getElementById('listaTodosPedidos');
+  lista.innerHTML='';
+  if (resp.ok) {
+    const pedidos = await resp.json();
+    pedidos.forEach(p => {
+      const li = document.createElement('li');
+      const clienteNome = p.cliente ? p.cliente.nome : 'Desconhecido';
+      li.textContent = `${p.id} - ${p.descricao} | Cliente: ${clienteNome} | ${new Date(p.data).toLocaleString()}`;
+      lista.appendChild(li);
+    });
+  }
+}
+
+function mostrarTelaCliente() {
+  document.getElementById('tela-login').style.display='none';
+  document.getElementById('tela-admin').style.display='none';
+  document.getElementById('tela-cliente').style.display='block';
+  document.getElementById('info-cliente').innerText = `Logado: ${usuario.nome} (${usuario.email})`;
+  carregarPedidosCliente();
+}
+
+function mostrarTelaAdmin() {
+  document.getElementById('tela-login').style.display='none';
+  document.getElementById('tela-cliente').style.display='none';
+  document.getElementById('tela-admin').style.display='block';
+  document.getElementById('info-admin').innerText = `Administrador: ${usuario.nome}`;
+  carregarTodosPedidos();
+}
+
+function logout() {
+  localStorage.removeItem('usuario');
+  usuario = null;
+  document.getElementById('tela-login').style.display='block';
+  document.getElementById('tela-cliente').style.display='none';
+  document.getElementById('tela-admin').style.display='none';
+}
+
+window.onload = () => {
+  const u = localStorage.getItem('usuario');
+  if (u) {
+    usuario = JSON.parse(u);
+    if (usuario.tipo === 'CLIENTE') mostrarTelaCliente();
+    else mostrarTelaAdmin();
+  }
+};
+</script>
+
+</body>
+</html>
