@@ -33,38 +33,38 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 ## 🗄️ Configuração do Banco de Dados (MariaDB)
 
-### 1️⃣ Localize o executável do MariaDB
+### 1️⃣ Localize no diretorio caminho executável do MariaDB 
 
 Normalmente o caminho é:
 ```
 C:\Program Files\MariaDB 12.0\bin\mysql
 ```
 
-### 2️⃣ Acesse o banco via terminal:
+### 2️⃣ Acesse o banco via terminal cmd:
 
 ```bash
 "C:\Program Files\MariaDB 12.0\bin\mysql" -u root -p --port=3307
 ```
 
-Digite a senha configurada (no exemplo, `123`).
+Digite a senha configurada no maria BD (no meu caso, por exemplo foi, `123`).
 
 Se estiver tudo certo, você verá:
 ```
 Welcome to the MariaDB monitor...
 ```
 
-### 3️⃣ Crie o banco de dados:
+### 3️⃣ execute esse codigo para criar o banco de dados:
 
 ```sql
 CREATE DATABASE sistemapedidos CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
 
-Verifique:
+Verifique se funcionou com:
 ```sql
 SHOW DATABASES;
 ```
 
-Saída esperada:
+Saída esperada deve ser:
 ```
 +--------------------+
 | Database           |
@@ -83,7 +83,7 @@ GRANT ALL PRIVILEGES ON sistemapedidos.* TO 'root'@'localhost' IDENTIFIED BY '12
 FLUSH PRIVILEGES;
 ```
 
-> Altere `'root'` e `'123'` conforme suas credenciais.
+> Altere `'root'` e `'123'` conforme suas credenciais configurada no maria DB.
 
 ---
 
@@ -142,7 +142,7 @@ Ao iniciar o projeto pela primeira vez, dois usuários são criados automaticame
 
 ---
 
-## 💻 Funcionalidades
+## 💻 Funcionalidades disponivel do sistema
 
 ### 👥 Cliente
 - Cadastro e login  
