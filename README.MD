@@ -43,7 +43,7 @@ C:\Program Files\MariaDB 12.0\bin\mysql
 ### 2️⃣ Acesse o banco via terminal cmd:
 
 ```bash
-"C:\Program Files\MariaDB 12.0\bin\mysql" -u root -p --port=3307
+"C:\Program Files\MariaDB 12.0\bin\mysql" -u root -p --port=3307  (no caso, coloque a porta definida por você no mariaBD da sua maquina)
 ```
 
 Digite a senha configurada no maria BD (no meu caso, por exemplo foi, `123`).
