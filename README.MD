@@ -23,8 +23,9 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 1. **Java 21** (configurado no PATH)  
 2. **MariaDB** (rodando na porta 3307 ou a configurada no projeto)  
-3. **Maven** (para build e execução)  
-4. **Eclipse IDE** ou similar  
+3. **Maven** (para build e execução) 
+4. **tomcate"" (instalado)
+5. **Eclipse IDE** ou similar  
 
 > ⚠️ **Não é necessário instalar o Tomcat separadamente**, pois o Spring Boot já traz um servidor embutido.
 
