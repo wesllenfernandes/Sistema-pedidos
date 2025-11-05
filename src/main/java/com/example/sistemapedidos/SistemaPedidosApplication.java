@@ -19,7 +19,7 @@ public class SistemaPedidosApplication {
     CommandLineRunner init(UsuarioRepository usuarioRepo) {
         return args -> {
 
-            // Verifica e cria o admin padrão
+           
             if (usuarioRepo.findByEmail("admin@teste.com").isEmpty()) {
                 Usuario admin = new Usuario();
                 admin.setNome("Administrador");
@@ -32,7 +32,7 @@ public class SistemaPedidosApplication {
                 System.out.println("ℹ️ Administrador já existente, nenhum novo criado.");
             }
 
-            // Verifica e cria o cliente padrão
+    
             if (usuarioRepo.findByEmail("cliente@teste.com").isEmpty()) {
                 Usuario cliente = new Usuario();
                 cliente.setNome("Cliente Teste");
