@@ -28,7 +28,7 @@ Antes de executar o projeto, certifique-se de ter instalado:
 5. **Eclipse IDE** ou similar  
 
 > ⚠️ **Não é necessário instalar o Tomcat separadamente**, pois o Spring Boot já traz um servidor embutido.
-
+> ** Essa aplicação é spring com JPA/Hiberate, então depende necessariamente da conexão da logica e persistência para funcionar e apresentar as telas
 ---
 
 ## 🗄️ Configuração do Banco de Dados (MariaDB)
@@ -87,7 +87,7 @@ FLUSH PRIVILEGES;
 
 ---
 
-## ⚙️ Configuração do Spring Boot
+## ⚙️ Configuração do Spring Boot com a conexão mariaBD
 
 Arquivo: `src/main/resources/application.properties`
 
@@ -107,7 +107,7 @@ server.port=8080
 ```
 
 > 🔧 Substitua `username`, `password` e `port` conforme sua instalação local do MariaDB.
-
+> a inicialização do projeto depende da conexão da logica e persistencia
 ---
 
 ## 🚀 Executando o Projeto
