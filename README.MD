@@ -29,7 +29,7 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 > ⚠️ **Não é necessário instalar o Tomcat separadamente**, pois o Spring Boot já traz um servidor embutido.
 > Essa aplicação é spring com JPA/Hiberate, então depende necessariamente da conexão da logica e persistência para funcionar e apresentar as telas ou seja:
->⚠️ **Observação: Se o banco de dados não estiver rodando, o sistema não inicializa nem carrega as páginas HTML, pois a aplicação depende da camada de persistência ativa
+>⚠️ Observação: Se o banco de dados não estiver rodando, o sistema não inicializa nem carrega as páginas HTML, pois a aplicação depende da camada de persistência ativa
 ---
 
 ## 🗄️ Configuração do Banco de Dados (MariaDB)
